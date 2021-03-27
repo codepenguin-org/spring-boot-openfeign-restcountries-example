@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "restcountries.client.url",
+      "type": "java.lang.String",
+      "description": "URL for the RestCountries REST service."
+    }
+  ]
+}

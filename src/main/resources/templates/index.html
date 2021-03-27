@@ -1,0 +1,292 @@
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2021 codepenguin.org
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <title>codepenguin.org - spring-boot-openfeign-restcountries-example</title>
+</head>
+
+<body class="bg-dark text-white">
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>spring-boot-openfeign-restcountries-example</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div th:if="${country == null}" class="alert alert-info" role="alert">
+                Select a country to show its information.
+            </div>
+            <div th:if="${country != null}" th:text="'Here is the information about ' + ${country.name}"
+                 class="alert alert-success" role="alert"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form th:action="@{/}">
+                <div class="mb-3">
+                    <label for="country-select" class="form-label">Country:</label>
+                    <select id="country-select" name="alphaCode" class="form-select">
+                        <option th:each="listCountry: ${countries}" th:value="${listCountry.alpha2Code}"
+                                th:text="${listCountry.name}"
+                                th:selected="${country != null && listCountry.alpha2Code == country.alpha2Code}">
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div th:if="${country != null}">
+        <div class="row">
+            <div class="col">
+                <hr/>
+                <h1 th:text="${country.name}" class="text-center"></h1>
+                <div class="text-center">
+                    <!--suppress RequiredAttributes -->
+                    <img th:src="${country.flag}" alt="Flag" width="150" height="100">
+                </div>
+
+            </div>
+        </div>
+        <dl class="row">
+            <dt class="col-4">Top Level Domain</dt>
+            <dd class="col-8">
+                <ul>
+                    <li th:each="domain: ${country.topLevelDomain}" th:text="${domain}"></li>
+                </ul>
+            </dd>
+
+            <dt class="col-4">Alpha2 Code</dt>
+            <dd th:text="${country.alpha2Code}" class="col-8"></dd>
+
+            <dt class="col-4">Alpha3 Code</dt>
+            <dd th:text="${country.alpha3Code}" class="col-8"></dd>
+
+            <dt class="col-4">Calling Codes</dt>
+            <dd class="col-8">
+                <ul>
+                    <li th:each="code: ${country.callingCodes}" th:text="${code}"></li>
+                </ul>
+            </dd>
+
+            <dt class="col-4">Capital</dt>
+            <dd th:text="${country.capital}" class="col-8"></dd>
+
+            <dt class="col-4">Alt. Spellings</dt>
+            <dd class="col-8">
+                <ul>
+                    <li th:each="spelling: ${country.altSpellings}" th:text="${spelling}"></li>
+                </ul>
+            </dd>
+
+            <dt class="col-4">Region</dt>
+            <dd th:text="${country.region}" class="col-8"></dd>
+
+            <dt class="col-4">Subregion</dt>
+            <dd th:text="${country.subregion}" class="col-8"></dd>
+
+            <dt class="col-4">Population</dt>
+            <dd th:text="${#numbers.formatInteger(country.population,0,'DEFAULT')}" class="col-8"></dd>
+
+            <dt class="col-4">Latitude</dt>
+            <dd th:text="${#numbers.formatDecimal(country.latlng.get(0),0,'DEFAULT',2,'DEFAULT')}" class="col-8"></dd>
+
+            <dt class="col-4">Longitude</dt>
+            <dd th:text="${#numbers.formatDecimal(country.latlng.get(1),0,'DEFAULT',2,'DEFAULT')}" class="col-8"></dd>
+
+            <dt class="col-4">Demonym</dt>
+            <dd th:text="${country.demonym}" class="col-8"></dd>
+
+            <dt class="col-4">Area</dt>
+            <dd th:text="${#numbers.formatDecimal(country.area,0,'DEFAULT', 2,'DEFAULT')}" class="col-8"></dd>
+
+            <dt class="col-4">Gini</dt>
+            <dd th:text="${#numbers.formatDecimal(country.gini,0,'DEFAULT', 2,'DEFAULT')}" class="col-8"></dd>
+
+            <dt class="col-4">Timezones</dt>
+            <dd class="col-8">
+                <ul>
+                    <li th:each="timezone: ${country.timezones}" th:text="${timezone}"></li>
+                </ul>
+            </dd>
+
+            <dt class="col-4">Borders</dt>
+            <dd class="col-8">
+                <ul>
+                    <li th:each="border: ${country.borders}" th:text="${border}"></li>
+                </ul>
+            </dd>
+
+            <dt class="col-4">Native Name</dt>
+            <dd th:text="${country.nativeName}" class="col-8"></dd>
+
+            <dt class="col-4">Numeric Code</dt>
+            <dd th:text="${country.numericCode}" class="col-8"></dd>
+
+            <dt class="col-4">Currencies</dt>
+            <dd class="col-8">
+                <table class="table table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Symbol</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="currency: ${country.currencies}">
+                        <td th:text="${currency.code}"></td>
+                        <td th:text="${currency.name}"></td>
+                        <td th:text="${currency.symbol}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </dd>
+
+            <dt class="col-4">Languages</dt>
+            <dd class="col-8">
+                <table class="table table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ISO 639-1</th>
+                        <th scope="col">ISO 639-2</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Native Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="language: ${country.languages}">
+                        <td th:text="${language.iso639_1}"></td>
+                        <td th:text="${language.iso639_2}"></td>
+                        <td th:text="${language.name}"></td>
+                        <td th:text="${language.nativeName}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </dd>
+
+            <dt class="col-4">Translations</dt>
+            <dd class="col-8">
+                <table class="table table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Language</th>
+                        <th scope="col">Translation</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>de</th>
+                        <td th:text="${country.translations.de}"></td>
+                    </tr>
+                    <tr>
+                        <th>es</th>
+                        <td th:text="${country.translations.es}"></td>
+                    </tr>
+                    <tr>
+                        <th>fr</th>
+                        <td th:text="${country.translations.fr}"></td>
+                    </tr>
+                    <tr>
+                        <th>ja</th>
+                        <td th:text="${country.translations.ja}"></td>
+                    </tr>
+                    <tr>
+                        <th>it</th>
+                        <td th:text="${country.translations.it}"></td>
+                    </tr>
+                    <tr>
+                        <th>br</th>
+                        <td th:text="${country.translations.br}"></td>
+                    </tr>
+                    <tr>
+                        <th>pt</th>
+                        <td th:text="${country.translations.pt}"></td>
+                    </tr>
+                    <tr>
+                        <th>nl</th>
+                        <td th:text="${country.translations.nl}"></td>
+                    </tr>
+                    <tr>
+                        <th>hr</th>
+                        <td th:text="${country.translations.hr}"></td>
+                    </tr>
+                    <tr>
+                        <th>fa</th>
+                        <td th:text="${country.translations.fa}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </dd>
+
+            <dt class="col-4">Regional Blocs</dt>
+            <dd class="col-8">
+                <table class="table table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Acronym</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Other Acronyms</th>
+                        <th scope="col">Other Names</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="regionalBloc: ${country.regionalBlocs}">
+                        <td th:text="${regionalBloc.acronym}"></td>
+                        <td th:text="${regionalBloc.name}"></td>
+                        <td>
+                            <ul>
+                                <li th:each="otherAcronym: ${regionalBloc.otherAcronyms}"
+                                    th:text="${otherAcronym}"></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li th:each="otherName: ${regionalBloc.otherNames}"
+                                    th:text="${otherName}"></li>
+                            </ul>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </dd>
+
+            <dt class="col-4">CIOC</dt>
+            <dd th:text="${country.cioc}" class="col-8"></dd>
+        </dl>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+</body>
+</html>
