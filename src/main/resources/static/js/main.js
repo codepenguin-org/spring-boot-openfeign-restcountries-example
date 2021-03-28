@@ -31,3 +31,9 @@ $("#random-country-button").click(
         $form.submit();
     }
 );
+
+$("#country-select").change(
+    function () {
+        $("#rest-countries-form").submit();
+    }
+);
