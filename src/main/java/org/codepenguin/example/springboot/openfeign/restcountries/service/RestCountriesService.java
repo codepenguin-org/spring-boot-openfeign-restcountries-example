@@ -76,13 +76,15 @@ public class RestCountriesService {
      */
     public List<SimpleRestCountry> getAllCountries() {
         var countries = simpleRestCountryRepository.findAll();
-        if (IterableUtils.isEmpty(countries)) {
-            countries = restCountriesClient.getAllCountries();
-            log.log(Level.INFO, "getAllCountries from restCountriesClient {0}", IterableUtils.size(countries));
-
-            simpleRestCountryRepository.saveAll(countries);
+        if (!IterableUtils.isEmpty(countries)) {
+            return IterableUtils.toList(countries);
         }
-        return IterableUtils.toList(countries);
+
+        final var allCountries = restCountriesClient.getAllCountries();
+        log.log(Level.INFO, "getAllCountries from restCountriesClient {0}", allCountries.size());
+
+        simpleRestCountryRepository.saveAll(allCountries);
+        return allCountries;
     }
 
     /**
