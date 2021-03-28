@@ -25,6 +25,8 @@
 package org.codepenguin.example.springboot.openfeign.restcountries.domain;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,14 +38,16 @@ import java.util.List;
  * @version 0.0.1
  * @since 11
  */
+@RedisHash("RestCountry")
 @Data
 public class RestCountry implements Serializable {
 
     private static final long serialVersionUID = 7387098566461620838L;
 
+    @Id
+    private String alpha2Code;
     private String name;
     private List<String> topLevelDomain;
-    private String alpha2Code;
     private String alpha3Code;
     private List<String> callingCodes;
     private String capital;

@@ -24,6 +24,7 @@
 
 package org.codepenguin.example.springboot.openfeign.restcountries.controller;
 
+import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
 import org.codepenguin.example.springboot.openfeign.restcountries.domain.RestCountry;
 import org.codepenguin.example.springboot.openfeign.restcountries.domain.SimpleRestCountry;
@@ -38,7 +39,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The controller for the RestCountries.
@@ -48,9 +48,8 @@ import java.util.logging.Logger;
  * @since 11
  */
 @Controller
+@Log
 public class RestCountriesController {
-
-    public static final Logger LOGGER = Logger.getLogger(RestCountriesController.class.getName());
 
     private final RestCountriesService restCountriesService;
 
@@ -77,7 +76,7 @@ public class RestCountriesController {
     @GetMapping("/")
     public String index(@RequestParam(required = false) String random, @RequestParam(required = false) String alphaCode,
                         Model model) {
-        LOGGER.log(Level.FINEST, "random = {0}, alphaCode = {1}", new Object[]{random, alphaCode});
+        log.log(Level.FINEST, "random = {0}, alphaCode = {1}", new Object[]{random, alphaCode});
 
         final List<SimpleRestCountry> allCountries = getAllCountries();
         getRestCountry(StringUtils.isNotBlank(random), alphaCode, allCountries)
