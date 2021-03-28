@@ -25,6 +25,8 @@
 package org.codepenguin.example.springboot.openfeign.restcountries.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codepenguin.example.springboot.openfeign.restcountries.domain.RestCountry;
+import org.codepenguin.example.springboot.openfeign.restcountries.domain.SimpleRestCountry;
 import org.codepenguin.example.springboot.openfeign.restcountries.service.RestCountriesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +34,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,21 +67,42 @@ public class RestCountriesController {
     /**
      * Process the index requests.
      *
+     * @param random    if this value isn't blank, then it indicates to select a random country. It takes precedence
+     *                  over whatever value the parameter alphaCode has.
      * @param alphaCode the country's alpha code. Isn't required.
      * @param model     the UI model.
      * @return the template name.
      */
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/")
-    public String index(@RequestParam(required = false) String alphaCode, Model model) {
-        LOGGER.log(Level.FINEST, "alphaCode = {0}", alphaCode);
+    public String index(@RequestParam(required = false) String random, @RequestParam(required = false) String alphaCode,
+                        Model model) {
+        LOGGER.log(Level.FINEST, "random = {0}, alphaCode = {1}", new Object[]{random, alphaCode});
 
-        if (StringUtils.isNotBlank(alphaCode)) {
-            model.addAttribute("country", restCountriesService.getCountryByAlphaCode(alphaCode));
-        }
-
-        final var allCountries = restCountriesService.getAllCountries();
-        allCountries.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+        final List<SimpleRestCountry> allCountries = getAllCountries();
+        getRestCountry(StringUtils.isNotBlank(random), alphaCode, allCountries)
+                .ifPresent(country -> model.addAttribute("country", country));
         model.addAttribute("countries", allCountries);
         return "index";
+    }
+
+    private List<SimpleRestCountry> getAllCountries() {
+        final var allCountries = restCountriesService.getAllCountries();
+        allCountries.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+        return allCountries;
+    }
+
+    private Optional<RestCountry> getRestCountry(final boolean random, final String alphaCode,
+                                                 final List<SimpleRestCountry> allCountries) {
+        if (random) {
+            final var index = new Random().nextInt(allCountries.size());
+            return Optional.of(restCountriesService.getCountryByAlphaCode(allCountries.get(index).getAlpha2Code()));
+        }
+
+        if (StringUtils.isNotBlank(alphaCode)) {
+            return Optional.of(restCountriesService.getCountryByAlphaCode(alphaCode));
+        }
+
+        return Optional.empty();
     }
 }
