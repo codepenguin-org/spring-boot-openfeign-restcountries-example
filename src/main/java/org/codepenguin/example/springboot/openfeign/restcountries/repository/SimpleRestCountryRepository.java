@@ -22,28 +22,19 @@
  * SOFTWARE.
  */
 
-package org.codepenguin.example.springboot.openfeign.restcountries.domain;
+package org.codepenguin.example.springboot.openfeign.restcountries.repository;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
-
-import java.io.Serializable;
+import org.codepenguin.example.springboot.openfeign.restcountries.domain.SimpleRestCountry;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 /**
- * The simplified version of a RestCountry.
+ * Redis repository for {@link SimpleRestCountry}.
  *
  * @author Jorge Garcia
  * @version 0.0.1
  * @since 11
  */
-@RedisHash("SimpleRestCountry")
-@Data
-public class SimpleRestCountry implements Serializable {
-
-    private static final long serialVersionUID = -4905995212654203638L;
-
-    @Id
-    private String alpha2Code;
-    private String name;
+@Repository
+public interface SimpleRestCountryRepository extends CrudRepository<SimpleRestCountry, String> {
 }

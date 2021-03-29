@@ -24,13 +24,18 @@
 
 package org.codepenguin.example.springboot.openfeign.restcountries.service;
 
+import lombok.extern.java.Log;
+import org.apache.commons.collections4.IterableUtils;
 import org.codepenguin.example.springboot.openfeign.restcountries.client.RestCountriesClient;
 import org.codepenguin.example.springboot.openfeign.restcountries.domain.RestCountry;
 import org.codepenguin.example.springboot.openfeign.restcountries.domain.SimpleRestCountry;
+import org.codepenguin.example.springboot.openfeign.restcountries.repository.RestCountryRepository;
+import org.codepenguin.example.springboot.openfeign.restcountries.repository.SimpleRestCountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * The service for RestCountries.
@@ -40,18 +45,28 @@ import java.util.List;
  * @since 11
  */
 @Service
+@Log
 public class RestCountriesService {
 
     private final RestCountriesClient restCountriesClient;
 
+    private final SimpleRestCountryRepository simpleRestCountryRepository;
+    private final RestCountryRepository restCountryRepository;
+
     /**
      * Constructor.
      *
-     * @param restCountriesClient The RestCountries client.
+     * @param restCountriesClient         the RestCountries client.
+     * @param simpleRestCountryRepository the SimpleRestCountry repository.
+     * @param restCountryRepository       the RestCountry repository.
      */
     @Autowired
-    public RestCountriesService(RestCountriesClient restCountriesClient) {
+    public RestCountriesService(RestCountriesClient restCountriesClient,
+                                SimpleRestCountryRepository simpleRestCountryRepository,
+                                RestCountryRepository restCountryRepository) {
         this.restCountriesClient = restCountriesClient;
+        this.simpleRestCountryRepository = simpleRestCountryRepository;
+        this.restCountryRepository = restCountryRepository;
     }
 
     /**
@@ -60,7 +75,16 @@ public class RestCountriesService {
      * @return the list of simple countries.
      */
     public List<SimpleRestCountry> getAllCountries() {
-        return restCountriesClient.getAllCountries();
+        var countries = simpleRestCountryRepository.findAll();
+        if (!IterableUtils.isEmpty(countries)) {
+            return IterableUtils.toList(countries);
+        }
+
+        final var allCountries = restCountriesClient.getAllCountries();
+        log.log(Level.INFO, "getAllCountries from restCountriesClient {0}", allCountries.size());
+
+        simpleRestCountryRepository.saveAll(allCountries);
+        return allCountries;
     }
 
     /**
@@ -70,6 +94,14 @@ public class RestCountriesService {
      * @return the country.
      */
     public RestCountry getCountryByAlphaCode(String alphaCode) {
-        return restCountriesClient.getCountryByAlphaCode(alphaCode);
+        var countryOptional = restCountryRepository.findById(alphaCode);
+        if (countryOptional.isPresent()) {
+            return countryOptional.get();
+        }
+
+        final var country = restCountriesClient.getCountryByAlphaCode(alphaCode);
+        log.log(Level.INFO, "getCountryByAlphaCode from restCountriesClient {0}", country.getAlpha2Code());
+        restCountryRepository.save(country);
+        return country;
     }
 }
