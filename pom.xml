@@ -47,6 +47,7 @@
         <sonar.projectKey>codepenguin-org_spring-boot-openfeign-restcountries-example</sonar.projectKey>
         <sonar.organization>codepenguin-org</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.sources>src/main/java,src/main/resources/templates</sonar.sources>
         <spring-cloud.version>2020.0.2</spring-cloud.version>
     </properties>
     <dependencies>
