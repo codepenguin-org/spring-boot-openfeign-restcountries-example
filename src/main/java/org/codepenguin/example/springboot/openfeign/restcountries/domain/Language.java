@@ -24,6 +24,7 @@
 
 package org.codepenguin.example.springboot.openfeign.restcountries.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -40,8 +41,12 @@ public class Language implements Serializable {
 
     private static final long serialVersionUID = -2546926039610087889L;
 
-    private String iso639_1;
-    private String iso639_2;
+    @JsonProperty("iso639_1")
+    private String iso6391;
+
+    @JsonProperty("iso639_2")
+    private String iso6392;
+    
     private String name;
     private String nativeName;
 }

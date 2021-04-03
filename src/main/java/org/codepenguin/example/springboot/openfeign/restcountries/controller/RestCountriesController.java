@@ -35,9 +35,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.logging.Level;
 
 /**
@@ -94,7 +94,7 @@ public class RestCountriesController {
     private Optional<RestCountry> getRestCountry(final boolean random, final String alphaCode,
                                                  final List<SimpleRestCountry> allCountries) {
         if (random) {
-            final var index = new Random().nextInt(allCountries.size());
+            final var index = new SecureRandom().nextInt(allCountries.size());
             return Optional.of(restCountriesService.getCountryByAlphaCode(allCountries.get(index).getAlpha2Code()));
         }
 
